@@ -28,9 +28,6 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLayeredPane1 = new javax.swing.JLayeredPane();
-        jPanel4 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jbutton_inserirPedido = new javax.swing.JButton();
         jbutton_alterarPedido = new javax.swing.JButton();
@@ -42,9 +39,10 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
         jLayeredPane2 = new javax.swing.JLayeredPane();
-        jPanel5 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jbutton_inserirPedido1 = new javax.swing.JButton();
         jbutton_alterarPedido1 = new javax.swing.JButton();
@@ -57,6 +55,8 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
 
@@ -102,48 +102,18 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel3.setText("CLIENTES");
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 690, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 172, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 690, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 172, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 690, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 172, Short.MAX_VALUE)
-        );
-
         jbutton_inserirPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jbutton_inserirPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_add_black_18dp.png"))); // NOI18N
         jbutton_inserirPedido.setText("Inserir Pedido");
         jbutton_inserirPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
 
         jbutton_alterarPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jbutton_alterarPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_edit_black_18dp.png"))); // NOI18N
         jbutton_alterarPedido.setText("Alterar Pedido");
         jbutton_alterarPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
 
         jbutton_RemoverPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jbutton_RemoverPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_clear_black_18dp.png"))); // NOI18N
         jbutton_RemoverPedido.setText("Remover Pedido");
         jbutton_RemoverPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
 
@@ -192,7 +162,7 @@ public class MainScreen extends javax.swing.JFrame {
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 233, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 211, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jbutton_RemoverPedido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jbutton_alterarPedido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -229,10 +199,43 @@ public class MainScreen extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 690, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 172, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 690, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 172, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 690, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 172, Short.MAX_VALUE)
+        );
+
+        jLayeredPane1.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jPanel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jPanel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jPanel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane1.setLayer(jPanel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
         jLayeredPane1.setLayout(jLayeredPane1Layout);
@@ -257,37 +260,18 @@ public class MainScreen extends javax.swing.JFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 690, Short.MAX_VALUE)
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 169, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 690, Short.MAX_VALUE)
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 172, Short.MAX_VALUE)
-        );
-
         jbutton_inserirPedido1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jbutton_inserirPedido1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_add_black_18dp.png"))); // NOI18N
         jbutton_inserirPedido1.setText("Inserir Cliente");
         jbutton_inserirPedido1.setMargin(new java.awt.Insets(4, 18, 4, 18));
 
         jbutton_alterarPedido1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jbutton_alterarPedido1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_edit_black_18dp.png"))); // NOI18N
         jbutton_alterarPedido1.setText("Alterar Cliente");
         jbutton_alterarPedido1.setMargin(new java.awt.Insets(4, 18, 4, 18));
 
         jbutton_RemoverPedido1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jbutton_RemoverPedido1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_clear_black_18dp.png"))); // NOI18N
         jbutton_RemoverPedido1.setText("Remover Cliente");
         jbutton_RemoverPedido1.setMargin(new java.awt.Insets(4, 18, 4, 18));
 
@@ -338,7 +322,7 @@ public class MainScreen extends javax.swing.JFrame {
                     .addComponent(jLabel15)
                     .addComponent(jLabel16)
                     .addComponent(jLabel11))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 156, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jbutton_RemoverPedido1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jbutton_alterarPedido1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -376,6 +360,28 @@ public class MainScreen extends javax.swing.JFrame {
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 690, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 169, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 690, Short.MAX_VALUE)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 172, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
@@ -398,9 +404,9 @@ public class MainScreen extends javax.swing.JFrame {
             .addGap(0, 172, Short.MAX_VALUE)
         );
 
+        jLayeredPane2.setLayer(jPanel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane2.setLayer(jPanel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane2.setLayer(jPanel6, javax.swing.JLayeredPane.DEFAULT_LAYER);
-        jLayeredPane2.setLayer(jPanel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane2.setLayer(jPanel7, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane2.setLayer(jPanel10, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
