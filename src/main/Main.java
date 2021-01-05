@@ -7,6 +7,7 @@ import controllers.ProductDAO;
 import java.sql.Connection;
 import models.Client;
 import models.Product;
+import view.MainScreen;
 
 public class Main {
 
@@ -18,5 +19,11 @@ public class Main {
         
         //Product prod = new Product(4, 9999, "Bolsa de Gordura", 3);
         //ProductDAO.update(prod);
+        
+        MainScreen tela = new MainScreen();
+        tela.setVisible(true);
+        tela.setLocationRelativeTo(null);
+        
+        System.out.println("Desenvolvido por Guilherme Rodrigues de Melo");
     }
 }
