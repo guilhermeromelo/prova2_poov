@@ -1,20 +1,25 @@
 package models;
 
+import java.time.LocalDateTime;
+
 public class Client {
     private int clientID;
     private String name;
     private String email;
+    private LocalDateTime creationDateTime;
 
     public Client(){
         this.clientID = 0;
         this.name = "Sem Nome";
         this.email = "Sem Email";
+        this.creationDateTime = null;
     }
     
-    public Client(int clientID, String name, String email) {
+    public Client(int clientID, String name, String email, LocalDateTime creationDateTime) {
         this.clientID = clientID;
         this.name = name;
         this.email = email;
+        this.creationDateTime = creationDateTime;
     }
 
     public int getClientID() {
@@ -39,6 +44,14 @@ public class Client {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public LocalDateTime getCreationDateTime() {
+        return creationDateTime;
+    }
+
+    public void setCreationDateTime(LocalDateTime creationDateTime) {
+        this.creationDateTime = creationDateTime;
     }
 
     @Override

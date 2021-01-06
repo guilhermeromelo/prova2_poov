@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import models.Product;
 
@@ -14,13 +16,14 @@ public class ProductDAO {
     public static String create(Product product) {
         String erro = null;
         PreparedStatement state;
-        String msgSQL = "insert into product(price, p_description, fk_client_id)"
-                + "values (?, ?, ?)";
+        String msgSQL = "insert into product(price, p_description, fk_client_id, creationDateTime)"
+                + "values (?, ?, ?, ?)";
         try {
             state = connection.prepareStatement(msgSQL);
             state.setDouble(1, product.getPrice());
             state.setString(2, product.getDescription());
             state.setInt(3, product.getFk_client_id());
+            state.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
             state.execute();
             state.close();
         } catch (SQLException e) {
@@ -62,6 +65,8 @@ public class ProductDAO {
                 newProduct.setPrice(res.getDouble("price"));
                 newProduct.setDescription(res.getString("p_description"));
                 newProduct.setFk_client_id(res.getInt("fk_client_id"));
+                Timestamp timestampFromDataBase = res.getTimestamp("creationDateTime");
+                newProduct.setCreationDateTime(timestampFromDataBase.toLocalDateTime());
                 productList.add(newProduct);
             }
         } catch (SQLException e) {

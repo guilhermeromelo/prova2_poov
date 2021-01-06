@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import models.Client;
 
@@ -14,11 +16,12 @@ public class ClientDAO {
     public static String create(Client newClient) {
         String erro = null;
         PreparedStatement state;
-        String msgSQL = "insert into client (name, email) values (?,?)";
+        String msgSQL = "insert into client (name, email, creationDateTime) values (?,?,?)";
         try {
             state = connection.prepareStatement(msgSQL);
             state.setString(1, newClient.getName());
             state.setString(2, newClient.getEmail());
+            state.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             state.execute();
             state.close();
         } catch (SQLException e) {
@@ -59,6 +62,8 @@ public class ClientDAO {
                 newClient.setClientID(res.getInt("client_id"));
                 newClient.setName(res.getString("name"));
                 newClient.setEmail(res.getString("email"));
+                Timestamp timestampFromDataBase = res.getTimestamp("creationDateTime");
+                newClient.setCreationDateTime(timestampFromDataBase.toLocalDateTime());
                 clientList.add(newClient);
             }
         } catch (SQLException e) {
@@ -106,5 +111,26 @@ public class ClientDAO {
             System.out.println("\n Cliente Excluído com sucesso!");
         }
         return erro;
+    }
+    
+    public static Client searchClientById(int id) {
+        ArrayList<Client> clientList = new ArrayList();
+        PreparedStatement state;
+        ResultSet res;
+        String msgSQL;
+        msgSQL = "select * from client where client_id = ?";
+
+        try {
+            state = connection.prepareStatement(msgSQL);
+            state.setInt(1, id);
+            res = state.executeQuery();
+            clientList = resultSetToArrayListClient(res);
+            res.close();
+            state.close();
+        } catch (SQLException e) {
+            System.out.println("\n Erro Encontrado: " + e.toString());
+        }
+
+        return clientList.get(0);
     }
 }
