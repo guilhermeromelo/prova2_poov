@@ -1,7 +1,9 @@
 package view;
 
 import controllers.ClientDAO;
+import controllers.ProductDAO;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -24,23 +26,42 @@ public class MainScreen extends javax.swing.JFrame {
         jPanel7.setVisible(false);
         jPanel8.setVisible(true);
         jPanel10.setVisible(false);
+        
+        productTableBuilder(jtable_pedidos, ProductDAO.read());
     }
 
     void productTableBuilder(JTable jtable, ArrayList<Product> productList) {
         double faturamento = 0;
         DefaultTableModel tableRows1;
+        LocalDateTime lastProductTime = null;
+        Product lastProduct = null;
         tableRows1 = new DefaultTableModel(new String[]{"Nº", "ID Produto", "Descrição", "Valor", "ID Cliente", "Nome Cliente"}, 0);
         for (int i = 0; i < productList.size(); i++) {
             Product p = productList.get(i);
             Client c = ClientDAO.searchClientById(p.getFk_client_id());
             faturamento += p.getPrice();
+            if (i == 0) {
+                lastProduct = p;
+                lastProductTime = p.getCreationDateTime();
+            } else if (p.getCreationDateTime().isAfter(lastProductTime)) {
+                lastProductTime = p.getCreationDateTime();
+            }
 
             tableRows1.addRow(new Object[]{(i + 1), p.getProdutctID(), p.getDescription(), p.getPrice(), p.getFk_client_id(), c.getName()});
         }
         jtable.setModel(tableRows1);
         jLabel_product_total_produtos.setText("" + productList.size());
         jLabel_product_faturamento.setText(df.format(faturamento).toString());
-        //jLabel_
+        if (lastProduct != null) {
+            jLabel_product_last_product_name.setText(lastProduct.getProdutctID() + " - "
+                    + lastProduct.getDescription());
+            jLabel_product_last_product_datetime.setText(lastProductTime.getDayOfMonth() + "/"
+                    + lastProductTime.getMonthValue()+ "/" + lastProductTime.getYear() + " - "
+                    + lastProductTime.getHour() + ":" + lastProductTime.getMinute());
+        } else {
+            jLabel_product_last_product_name.setText("Produtos ainda não foram Cadastrados.");
+            jLabel_product_last_product_datetime.setText("");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -65,7 +86,8 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel_product_faturamento = new javax.swing.JLabel();
         jLabel_product_total_produtos = new javax.swing.JLabel();
-        jLabel_product_last_product = new javax.swing.JLabel();
+        jLabel_product_last_product_name = new javax.swing.JLabel();
+        jLabel_product_last_product_datetime = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
@@ -129,105 +151,73 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel3.setText("CLIENTES");
 
+        jPanel1.setLayout(null);
+
         jbutton_inserirPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jbutton_inserirPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_add_black_18dp.png"))); // NOI18N
         jbutton_inserirPedido.setText("Inserir Pedido");
         jbutton_inserirPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
+        jPanel1.add(jbutton_inserirPedido);
+        jbutton_inserirPedido.setBounds(531, 24, 153, 34);
 
         jbutton_alterarPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jbutton_alterarPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_edit_black_18dp.png"))); // NOI18N
         jbutton_alterarPedido.setText("Alterar Pedido");
         jbutton_alterarPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
+        jPanel1.add(jbutton_alterarPedido);
+        jbutton_alterarPedido.setBounds(531, 76, 153, 34);
 
         jbutton_RemoverPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jbutton_RemoverPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_clear_black_18dp.png"))); // NOI18N
         jbutton_RemoverPedido.setText("Remover Pedido");
         jbutton_RemoverPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
+        jPanel1.add(jbutton_RemoverPedido);
+        jbutton_RemoverPedido.setBounds(531, 128, 153, 34);
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel4.setText("Total de Produtos Cadastrados:");
+        jPanel1.add(jLabel4);
+        jLabel4.setBounds(10, 10, 220, 17);
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel5.setText("Horário do Último Produto:");
+        jLabel5.setText("Último Produto Cadastrado:");
+        jPanel1.add(jLabel5);
+        jLabel5.setBounds(10, 40, 194, 17);
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel6.setText("Faturamento Total");
+        jPanel1.add(jLabel6);
+        jLabel6.setBounds(10, 90, 222, 29);
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 40)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 0, 0));
         jLabel7.setText("R$");
+        jPanel1.add(jLabel7);
+        jLabel7.setBounds(10, 120, 48, 49);
 
         jLabel_product_faturamento.setFont(new java.awt.Font("Tahoma", 0, 40)); // NOI18N
         jLabel_product_faturamento.setForeground(new java.awt.Color(255, 0, 0));
         jLabel_product_faturamento.setText("0,00");
+        jPanel1.add(jLabel_product_faturamento);
+        jLabel_product_faturamento.setBounds(70, 120, 210, 49);
 
         jLabel_product_total_produtos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel_product_total_produtos.setForeground(new java.awt.Color(255, 0, 0));
         jLabel_product_total_produtos.setText("XXX");
+        jPanel1.add(jLabel_product_total_produtos);
+        jLabel_product_total_produtos.setBounds(240, 10, 78, 17);
 
-        jLabel_product_last_product.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel_product_last_product.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel_product_last_product.setText("XX/XX/XX - XX:XX");
+        jLabel_product_last_product_name.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_product_last_product_name.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel_product_last_product_name.setText("XX/XX/XX - XX:XX");
+        jPanel1.add(jLabel_product_last_product_name);
+        jLabel_product_last_product_name.setBounds(210, 40, 240, 17);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel6)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel_product_faturamento, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel_product_last_product)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 217, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jbutton_RemoverPedido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jbutton_alterarPedido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jbutton_inserirPedido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel_product_total_produtos, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jbutton_inserirPedido)
-                        .addGap(18, 18, 18)
-                        .addComponent(jbutton_alterarPedido)
-                        .addGap(18, 18, 18)
-                        .addComponent(jbutton_RemoverPedido)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel_product_total_produtos))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel_product_last_product))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel_product_faturamento))))
-                .addContainerGap())
-        );
+        jLabel_product_last_product_datetime.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_product_last_product_datetime.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel_product_last_product_datetime.setText("XX/XX/XX - XX:XX");
+        jPanel1.add(jLabel_product_last_product_datetime);
+        jLabel_product_last_product_datetime.setBounds(210, 60, 240, 17);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -490,8 +480,8 @@ public class MainScreen extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jLayeredPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 690, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane2)
                             .addComponent(jLayeredPane2))))
@@ -569,7 +559,8 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel_client_mais_gastou;
     private javax.swing.JLabel jLabel_client_total_cadastrados;
     private javax.swing.JLabel jLabel_product_faturamento;
-    private javax.swing.JLabel jLabel_product_last_product;
+    private javax.swing.JLabel jLabel_product_last_product_datetime;
+    private javax.swing.JLabel jLabel_product_last_product_name;
     private javax.swing.JLabel jLabel_product_total_produtos;
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;
