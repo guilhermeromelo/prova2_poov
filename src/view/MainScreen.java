@@ -28,6 +28,7 @@ public class MainScreen extends javax.swing.JFrame {
         jPanel10.setVisible(false);
 
         productTableBuilder(jtable_pedidos, ProductDAO.read());
+        clientTableBuilder(jtable_clientes, ClientDAO.read());
     }
 
     void productTableBuilder(JTable jtable, ArrayList<Product> productList) {
@@ -71,7 +72,7 @@ public class MainScreen extends javax.swing.JFrame {
         DefaultTableModel tableRows;
         LocalDateTime lastClientTime = null;
         Client lastClient = null;
-        tableRows = new DefaultTableModel(new String[]{"Nº", "ID", "Nome", "Data Cadastro", "Hora Cadastro"}, 0);
+        tableRows = new DefaultTableModel(new String[]{"Nº", "ID", "Nome", "Email", "Data Cadastro", "Hora Cadastro"}, 0);
         for (int i = 0; i < clientList.size(); i++) {
             Client c = clientList.get(i);
             if (i == 0) {
@@ -83,22 +84,21 @@ public class MainScreen extends javax.swing.JFrame {
             String date = c.getCreationDateTime().getDayOfMonth() + "/"
                     + c.getCreationDateTime().getMonthValue() + "/" + c.getCreationDateTime().getYear();
             String hour = c.getCreationDateTime().getHour() + ":" + c.getCreationDateTime().getMinute();
-            tableRows.addRow(new Object[]{(i + 1), c.getClientID(), c.getName(), date, hour});
+            tableRows.addRow(new Object[]{(i + 1), c.getClientID(), c.getName(), c.getEmail(), date, hour});
         }
         jtable.setModel(tableRows);
         jLabel_client_total_cadastrados.setText("" + clientList.size());
-        /*if (lastClient != null) {
-            jLabel_product_last_product_name.setText(lastClient.getClientID()+ " - "
+        if (lastClient != null) {
+            jLabel_client_last_client_name.setText(lastClient.getClientID() + " - "
                     + lastClient.getName());
-            jLabel_product_last_product_datetime.setText(lastClientTime.getDayOfMonth() + "/"
+            jLabel_client_last_client_datetime.setText(lastClientTime.getDayOfMonth() + "/"
                     + lastClientTime.getMonthValue() + "/" + lastClientTime.getYear() + " - "
                     + lastClientTime.getHour() + ":" + lastClientTime.getMinute());
         } else {
-            jLabel_product_last_product_name.setText("Produtos ainda não foram Cadastrados.");
-            jLabel_product_last_product_datetime.setText("");
-        }*/
+            jLabel_client_last_client_name.setText("Produtos ainda não foram Cadastrados.");
+            jLabel_client_last_client_datetime.setText("");
+        }
     }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -138,7 +138,8 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel_client_maior_numero_pedidos = new javax.swing.JLabel();
         jLabel_client_mais_gastou = new javax.swing.JLabel();
         jLabel_client_total_cadastrados = new javax.swing.JLabel();
-        jLabel_client_last_client = new javax.swing.JLabel();
+        jLabel_client_last_client_datetime = new javax.swing.JLabel();
+        jLabel_client_last_client_name = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
@@ -193,21 +194,21 @@ public class MainScreen extends javax.swing.JFrame {
         jbutton_inserirPedido.setText("Inserir Pedido");
         jbutton_inserirPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
         jPanel1.add(jbutton_inserirPedido);
-        jbutton_inserirPedido.setBounds(531, 24, 153, 34);
+        jbutton_inserirPedido.setBounds(504, 24, 180, 34);
 
         jbutton_alterarPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jbutton_alterarPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_edit_black_18dp.png"))); // NOI18N
         jbutton_alterarPedido.setText("Alterar Pedido");
         jbutton_alterarPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
         jPanel1.add(jbutton_alterarPedido);
-        jbutton_alterarPedido.setBounds(531, 76, 153, 34);
+        jbutton_alterarPedido.setBounds(504, 76, 180, 34);
 
         jbutton_RemoverPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jbutton_RemoverPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_clear_black_18dp.png"))); // NOI18N
         jbutton_RemoverPedido.setText("Remover Pedido");
         jbutton_RemoverPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
         jPanel1.add(jbutton_RemoverPedido);
-        jbutton_RemoverPedido.setBounds(531, 128, 153, 34);
+        jbutton_RemoverPedido.setBounds(504, 128, 180, 34);
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel4.setText("Total de Produtos Cadastrados:");
@@ -319,6 +320,11 @@ public class MainScreen extends javax.swing.JFrame {
         jbutton_inserirPedido1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_add_black_18dp.png"))); // NOI18N
         jbutton_inserirPedido1.setText("Inserir Cliente");
         jbutton_inserirPedido1.setMargin(new java.awt.Insets(4, 18, 4, 18));
+        jbutton_inserirPedido1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbutton_inserirPedido1ActionPerformed(evt);
+            }
+        });
 
         jbutton_alterarPedido1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jbutton_alterarPedido1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_edit_black_18dp.png"))); // NOI18N
@@ -329,6 +335,11 @@ public class MainScreen extends javax.swing.JFrame {
         jbutton_RemoverPedido1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_clear_black_18dp.png"))); // NOI18N
         jbutton_RemoverPedido1.setText("Remover Cliente");
         jbutton_RemoverPedido1.setMargin(new java.awt.Insets(4, 18, 4, 18));
+        jbutton_RemoverPedido1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbutton_RemoverPedido1ActionPerformed(evt);
+            }
+        });
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel9.setText("Total de Clientes Cadastrados:");
@@ -354,65 +365,79 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel_client_total_cadastrados.setForeground(new java.awt.Color(255, 0, 0));
         jLabel_client_total_cadastrados.setText("XXX");
 
-        jLabel_client_last_client.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel_client_last_client.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel_client_last_client.setText("XX/XX/XX - XX:XX");
+        jLabel_client_last_client_datetime.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_client_last_client_datetime.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel_client_last_client_datetime.setText("XX/XX/XX - XX:XX");
+
+        jLabel_client_last_client_name.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel_client_last_client_name.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel_client_last_client_name.setText("XX/XX/XX - XX:XX");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(10, 10, 10)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel_client_total_cadastrados, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addGap(10, 10, 10)
+                                .addComponent(jLabel_client_total_cadastrados, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addComponent(jLabel10)
+                                .addGap(10, 10, 10)
+                                .addComponent(jLabel_client_last_client_name, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
+                        .addComponent(jbutton_RemoverPedido1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel_client_last_client, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel14)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel_client_maior_numero_pedidos)
-                    .addComponent(jLabel_client_mais_gastou))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jbutton_RemoverPedido1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbutton_alterarPedido1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbutton_inserirPedido1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel_client_mais_gastou)
+                            .addGroup(jPanel8Layout.createSequentialGroup()
+                                .addGap(250, 250, 250)
+                                .addComponent(jLabel_client_last_client_datetime, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel_client_maior_numero_pedidos)
+                            .addComponent(jLabel15))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jbutton_alterarPedido1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jbutton_inserirPedido1, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(21, 21, 21))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
-                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(10, 10, 10)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jbutton_inserirPedido1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jbutton_alterarPedido1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jbutton_RemoverPedido1))
-                    .addGroup(jPanel8Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel9)
                             .addComponent(jLabel_client_total_cadastrados))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGap(13, 13, 13)
+                        .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel10)
-                            .addComponent(jLabel_client_last_client))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(jLabel_client_last_client_name)))
+                    .addComponent(jbutton_RemoverPedido1))
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel_client_last_client_datetime)
+                        .addGap(13, 13, 13)
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel_client_maior_numero_pedidos)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(3, 3, 3)
                         .addComponent(jLabel15)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel_client_mais_gastou)))
-                .addContainerGap(14, Short.MAX_VALUE))
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel_client_mais_gastou))
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jbutton_inserirPedido1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jbutton_alterarPedido1))))
         );
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
@@ -545,6 +570,14 @@ public class MainScreen extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jbutton_RemoverPedido1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_RemoverPedido1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbutton_RemoverPedido1ActionPerformed
+
+    private void jbutton_inserirPedido1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_inserirPedido1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jbutton_inserirPedido1ActionPerformed
+
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -589,7 +622,8 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JLabel jLabel_client_last_client;
+    private javax.swing.JLabel jLabel_client_last_client_datetime;
+    private javax.swing.JLabel jLabel_client_last_client_name;
     private javax.swing.JLabel jLabel_client_maior_numero_pedidos;
     private javax.swing.JLabel jLabel_client_mais_gastou;
     private javax.swing.JLabel jLabel_client_total_cadastrados;
