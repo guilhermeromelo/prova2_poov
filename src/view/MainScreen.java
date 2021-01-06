@@ -26,7 +26,7 @@ public class MainScreen extends javax.swing.JFrame {
         jPanel7.setVisible(false);
         jPanel8.setVisible(true);
         jPanel10.setVisible(false);
-        
+
         productTableBuilder(jtable_pedidos, ProductDAO.read());
     }
 
@@ -35,7 +35,7 @@ public class MainScreen extends javax.swing.JFrame {
         DefaultTableModel tableRows1;
         LocalDateTime lastProductTime = null;
         Product lastProduct = null;
-        tableRows1 = new DefaultTableModel(new String[]{"Nº", "ID Produto", "Descrição", "Valor", "ID Cliente", "Nome Cliente"}, 0);
+        tableRows1 = new DefaultTableModel(new String[]{"Nº", "ID Produto", "Descrição", "Valor", "Data", "Hora", "ID Cliente", "Nome Cliente"}, 0);
         for (int i = 0; i < productList.size(); i++) {
             Product p = productList.get(i);
             Client c = ClientDAO.searchClientById(p.getFk_client_id());
@@ -46,8 +46,11 @@ public class MainScreen extends javax.swing.JFrame {
             } else if (p.getCreationDateTime().isAfter(lastProductTime)) {
                 lastProductTime = p.getCreationDateTime();
             }
-
-            tableRows1.addRow(new Object[]{(i + 1), p.getProdutctID(), p.getDescription(), p.getPrice(), p.getFk_client_id(), c.getName()});
+            String date = p.getCreationDateTime().getDayOfMonth() + "/"
+                    + p.getCreationDateTime().getMonthValue() + "/" + p.getCreationDateTime().getYear();
+            String hour = p.getCreationDateTime().getHour() + ":" + p.getCreationDateTime().getMinute();
+            tableRows1.addRow(new Object[]{(i + 1), p.getProdutctID(), p.getDescription(),
+                p.getPrice(),date,hour, p.getFk_client_id(), c.getName()});
         }
         jtable.setModel(tableRows1);
         jLabel_product_total_produtos.setText("" + productList.size());
@@ -56,12 +59,44 @@ public class MainScreen extends javax.swing.JFrame {
             jLabel_product_last_product_name.setText(lastProduct.getProdutctID() + " - "
                     + lastProduct.getDescription());
             jLabel_product_last_product_datetime.setText(lastProductTime.getDayOfMonth() + "/"
-                    + lastProductTime.getMonthValue()+ "/" + lastProductTime.getYear() + " - "
+                    + lastProductTime.getMonthValue() + "/" + lastProductTime.getYear() + " - "
                     + lastProductTime.getHour() + ":" + lastProductTime.getMinute());
         } else {
             jLabel_product_last_product_name.setText("Produtos ainda não foram Cadastrados.");
             jLabel_product_last_product_datetime.setText("");
         }
+    }
+
+    void clientTableBuilder(JTable jtable, ArrayList<Client> clientList) {
+        DefaultTableModel tableRows;
+        LocalDateTime lastClientTime = null;
+        Client lastClient = null;
+        tableRows = new DefaultTableModel(new String[]{"Nº", "ID", "Nome", "Data Cadastro", "Hora Cadastro"}, 0);
+        for (int i = 0; i < clientList.size(); i++) {
+            Client c = clientList.get(i);
+            if (i == 0) {
+                lastClient = c;
+                lastClientTime = c.getCreationDateTime();
+            } else if (c.getCreationDateTime().isAfter(lastClientTime)) {
+                lastClientTime = c.getCreationDateTime();
+            }
+            String date = c.getCreationDateTime().getDayOfMonth() + "/"
+                    + c.getCreationDateTime().getMonthValue() + "/" + c.getCreationDateTime().getYear();
+            String hour = c.getCreationDateTime().getHour() + ":" + c.getCreationDateTime().getMinute();
+            tableRows.addRow(new Object[]{(i + 1), c.getClientID(), c.getName(), date, hour});
+        }
+        jtable.setModel(tableRows);
+        jLabel_client_total_cadastrados.setText("" + clientList.size());
+        /*if (lastClient != null) {
+            jLabel_product_last_product_name.setText(lastClient.getClientID()+ " - "
+                    + lastClient.getName());
+            jLabel_product_last_product_datetime.setText(lastClientTime.getDayOfMonth() + "/"
+                    + lastClientTime.getMonthValue() + "/" + lastClientTime.getYear() + " - "
+                    + lastClientTime.getHour() + ":" + lastClientTime.getMinute());
+        } else {
+            jLabel_product_last_product_name.setText("Produtos ainda não foram Cadastrados.");
+            jLabel_product_last_product_datetime.setText("");
+        }*/
     }
 
     @SuppressWarnings("unchecked")

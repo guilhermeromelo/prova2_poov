@@ -12,13 +12,6 @@ import view.MainScreen;
 public class Main {
 
     public static void main(String[] args) {
-        // TODO code application logic here
-        
-        //Client client = new Client(0, "Rodrigues", "rod@gui.com");
-        //ClientDAO.create(client);
-        
-        //Product prod = new Product(4, 9999, "Bolsa de Gordura", 3);
-        //ProductDAO.update(prod);
         
         MainScreen tela = new MainScreen();
         tela.setVisible(true);
