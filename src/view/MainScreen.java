@@ -28,8 +28,14 @@ public class MainScreen extends javax.swing.JFrame {
         jPanel_client_info.setVisible(true);
         jPanel10.setVisible(false);
 
+        //TABLES INITIALIZATION
         productTableBuilder(jtable_pedidos, ProductDAO.read());
         clientTableBuilder(jtable_clientes, ClientDAO.read());
+
+        //ESPECIAL TEXTFIELDS INITIALIZATION
+        jtf_addClient_id.setEditable(false);
+        jtf_product_id.setEditable(false);
+
     }
 
     void productTableBuilder(JTable jtable, ArrayList<Product> productList) {
@@ -47,6 +53,7 @@ public class MainScreen extends javax.swing.JFrame {
                 lastProductTime = p.getCreationDateTime();
             } else if (p.getCreationDateTime().isAfter(lastProductTime)) {
                 lastProductTime = p.getCreationDateTime();
+                lastProduct = p;
             }
             String date = p.getCreationDateTime().getDayOfMonth() + "/"
                     + p.getCreationDateTime().getMonthValue() + "/" + p.getCreationDateTime().getYear();
@@ -81,6 +88,7 @@ public class MainScreen extends javax.swing.JFrame {
                 lastClientTime = c.getCreationDateTime();
             } else if (c.getCreationDateTime().isAfter(lastClientTime)) {
                 lastClientTime = c.getCreationDateTime();
+                lastClient = c;
             }
             String date = c.getCreationDateTime().getDayOfMonth() + "/"
                     + c.getCreationDateTime().getMonthValue() + "/" + c.getCreationDateTime().getYear();
@@ -101,7 +109,7 @@ public class MainScreen extends javax.swing.JFrame {
         }
     }
 
-    boolean newClientVerification() {
+    boolean newClientValidation() {
         boolean valido = true;
         String erro = "";
         if (jtf_addClient_name.getText().isEmpty()) {
@@ -821,6 +829,10 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void jbutton_client_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_client_addActionPerformed
         // TODO add your handling code here:
+        jtf_addClient_name.setText("");
+        jtf_addClient_id.setText("Gerado Pelo Sistema");
+        jtf_addClient_email.setText("");
+
         jPanel_client_add.setVisible(true);
         jPanel_client_info.setVisible(false);
     }//GEN-LAST:event_jbutton_client_addActionPerformed
@@ -845,6 +857,10 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void jbutton_inserirPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_inserirPedidoActionPerformed
         // TODO add your handling code here:
+        jtf_product_id.setText("Gerado pelo Sistema");
+        jtf_product_price.setText("");
+        jtf_product_description.setText("");
+        
         jPanel_product_Info.setVisible(false);
         jPanel_product_add.setVisible(true);
     }//GEN-LAST:event_jbutton_inserirPedidoActionPerformed
@@ -855,7 +871,18 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void jb_addCliente_createActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addCliente_createActionPerformed
         // TODO add your handling code here:
-        newClientVerification();
+        if (newClientValidation()) {
+            String erro = ClientDAO.create(new Client(0, jtf_addClient_name.getText(), jtf_addClient_email.getText(), null));
+            clientTableBuilder(jtable_clientes, ClientDAO.read());
+            //SHOW CREATION RESULT
+            JOptionPane.showMessageDialog(null, (erro == null)
+                    ? "Dados do Cliente salvos com sucesso!"
+                    : "Erro Encontado: \n" + erro, "Resultado da operação",
+                    (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+            //CHANGE SUBPAGE
+            jPanel_client_add.setVisible(false);
+            jPanel_client_info.setVisible(true);
+        }
     }//GEN-LAST:event_jb_addCliente_createActionPerformed
 
     private void jb_addCliente_backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addCliente_backActionPerformed
