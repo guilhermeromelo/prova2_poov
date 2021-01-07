@@ -15,8 +15,9 @@ public class MainScreen extends javax.swing.JFrame {
 
     //DECIMAL FORMATTER
     DecimalFormat df = new DecimalFormat("#.00");
-    
+
     boolean isClientUpdate = false;
+    boolean isPedidoUpdate = false;
 
     public MainScreen() {
         initComponents();
@@ -834,6 +835,7 @@ public class MainScreen extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    //CHANGE TO ADD CLIENT SCREEN
     private void jbutton_client_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_client_addActionPerformed
         // TODO add your handling code here:
         jtf_addClient_name.setText("");
@@ -846,6 +848,7 @@ public class MainScreen extends javax.swing.JFrame {
         jPanel_client_info.setVisible(false);
     }//GEN-LAST:event_jbutton_client_addActionPerformed
 
+    //CHANGE TO ADD CLIENT SCREEN WITH A CLIENT DATA TO UPDATE
     private void jbutton_client_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_client_updateActionPerformed
         // TODO add your handling code here:
         //ASK WHAT OBJECT USER WANTS TO UPDATE
@@ -864,7 +867,7 @@ public class MainScreen extends javax.swing.JFrame {
         //PREPARE NEW SCREEN OR SHOW ERROR MESSAGE
         if (achou == true) {
             //PREPARE NEW SCREEN
-            jtf_addClient_id.setText(""+clientModify.getClientID());
+            jtf_addClient_id.setText("" + clientModify.getClientID());
             jtf_addClient_name.setText(clientModify.getName());
             jtf_addClient_email.setText(clientModify.getEmail());
             //MAKE THE SCREEN CHANGES
@@ -873,8 +876,7 @@ public class MainScreen extends javax.swing.JFrame {
             jb_addCliente_create.setText("Finalizar Alteração");
             jPanel_client_add.setVisible(true);
             jPanel_client_info.setVisible(false);
-            
-            
+
         } else {
             JOptionPane.showMessageDialog(null, "ID do Cliente não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
         }
@@ -883,6 +885,7 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void jbutton_alterarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_alterarPedidoActionPerformed
         // TODO add your handling code here:
+        isPedidoUpdate = true;
     }//GEN-LAST:event_jbutton_alterarPedidoActionPerformed
 
     private void jb_addPedido_createActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addPedido_createActionPerformed
@@ -895,12 +898,13 @@ public class MainScreen extends javax.swing.JFrame {
         jPanel_product_add.setVisible(false);
     }//GEN-LAST:event_jb_addPedido_backActionPerformed
 
+    //CHANGE TO ADD PEDIDO SCREEN
     private void jbutton_inserirPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_inserirPedidoActionPerformed
         // TODO add your handling code here:
         jtf_product_id.setText("Gerado pelo Sistema");
         jtf_product_price.setText("");
         jtf_product_description.setText("");
-
+        isPedidoUpdate = false;
         jPanel_product_Info.setVisible(false);
         jPanel_product_add.setVisible(true);
     }//GEN-LAST:event_jbutton_inserirPedidoActionPerformed
@@ -909,15 +913,14 @@ public class MainScreen extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jbutton_RemoverPedidoActionPerformed
 
+    //SAVE THE NEW CLIENT IN DATABASE / UPDATE DE CLIENT INFORMATION IN DATABASE
     private void jb_addCliente_createActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addCliente_createActionPerformed
         // TODO add your handling code here:
         if (newClientValidation()) {
             String erro;
-            if(isClientUpdate == true){
-                System.out.println("foi de update");
+            if (isClientUpdate == true) {
                 erro = ClientDAO.update(new Client(Integer.parseInt(jtf_addClient_id.getText()), jtf_addClient_name.getText(), jtf_addClient_email.getText(), null));
-            }else{
-                System.out.println("foi de create");
+            } else {
                 erro = ClientDAO.create(new Client(0, jtf_addClient_name.getText(), jtf_addClient_email.getText(), null));
             }
             clientTableBuilder(jtable_clientes, ClientDAO.read());
@@ -940,6 +943,37 @@ public class MainScreen extends javax.swing.JFrame {
 
     private void jbutton_client_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_client_deleteActionPerformed
         // TODO add your handling code here:
+        String idClientDelete = JOptionPane.showInputDialog("Por favor digite o ID do Cliente para remover: ");
+        ArrayList<Client> clientsList = ClientDAO.read();
+        Client clientDelete = new Client();
+        boolean achou = false;
+        for (int i = 0; i < clientsList.size() && achou == false; i++) {
+            clientDelete = clientsList.get(i);
+            if (idClientDelete.equals(""+clientDelete.getClientID())) {
+                achou = true;
+            }
+        }
+        //ASK DELETE CONFIRMATION AND EXECUTE DELETE. THEN SHOW THE OPERATION RESULTS
+        if (achou == true) {
+            int delete = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir "
+                    + "o Cliente:\nID: " + clientDelete.getClientID() + ", Nome: " + clientDelete.getName(),
+                    "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+
+            if (delete == 0) {
+                String erro = ClientDAO.delete(clientDelete);
+                JOptionPane.showMessageDialog(null, (erro == null)
+                        ? "Cliente Removido com Sucesso!"
+                        : "Erro Encontado: \n" + erro, "Resultado da operação",
+                        (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+                //REFRESH TABLE
+                clientTableBuilder(jtable_clientes, ClientDAO.read());
+            } else {
+                JOptionPane.showMessageDialog(null, "Operação Cancelada!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "ID não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+        }
+        
     }//GEN-LAST:event_jbutton_client_deleteActionPerformed
 
     public static void main(String args[]) {

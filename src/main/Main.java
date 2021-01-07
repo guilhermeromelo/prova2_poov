@@ -14,8 +14,6 @@ public class Main {
 
     public static void main(String[] args) {
         
-        System.out.println(LocalDateTime.now());
-        
         MainScreen tela = new MainScreen();
         tela.setVisible(true);
         tela.setLocationRelativeTo(null);
