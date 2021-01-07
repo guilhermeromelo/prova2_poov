@@ -5,6 +5,7 @@ import controllers.ClientDAO;
 import controllers.DatabaseConnection;
 import controllers.ProductDAO;
 import java.sql.Connection;
+import java.time.LocalDateTime;
 import models.Client;
 import models.Product;
 import view.MainScreen;
@@ -12,6 +13,8 @@ import view.MainScreen;
 public class Main {
 
     public static void main(String[] args) {
+        
+        System.out.println(LocalDateTime.now());
         
         MainScreen tela = new MainScreen();
         tela.setVisible(true);

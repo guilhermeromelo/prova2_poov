@@ -15,6 +15,8 @@ public class MainScreen extends javax.swing.JFrame {
 
     //DECIMAL FORMATTER
     DecimalFormat df = new DecimalFormat("#.00");
+    
+    boolean isClientUpdate = false;
 
     public MainScreen() {
         initComponents();
@@ -182,7 +184,7 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel_client_last_client_name = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jPanel_client_add = new javax.swing.JPanel();
-        jLabel17 = new javax.swing.JLabel();
+        jlabel_add_or_update_client = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jb_addCliente_create = new javax.swing.JButton();
@@ -574,19 +576,24 @@ public class MainScreen extends javax.swing.JFrame {
                             .addGroup(jPanel_client_infoLayout.createSequentialGroup()
                                 .addComponent(jLabel10)
                                 .addGap(10, 10, 10)
-                                .addComponent(jLabel_client_last_client_name, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 106, Short.MAX_VALUE)
+                                .addComponent(jLabel_client_last_client_name, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                         .addComponent(jbutton_client_add, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel_client_infoLayout.createSequentialGroup()
                         .addGroup(jPanel_client_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel_client_mais_gastou)
                             .addGroup(jPanel_client_infoLayout.createSequentialGroup()
-                                .addGap(250, 250, 250)
-                                .addComponent(jLabel_client_last_client_datetime, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel14)
-                            .addComponent(jLabel_client_maior_numero_pedidos)
-                            .addComponent(jLabel15))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel_client_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel14)
+                                    .addComponent(jLabel15)
+                                    .addGroup(jPanel_client_infoLayout.createSequentialGroup()
+                                        .addGap(250, 250, 250)
+                                        .addComponent(jLabel_client_last_client_datetime, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE))
+                            .addGroup(jPanel_client_infoLayout.createSequentialGroup()
+                                .addGroup(jPanel_client_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel_client_mais_gastou, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel_client_maior_numero_pedidos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(29, 29, 29)))
                         .addGroup(jPanel_client_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jbutton_client_delete, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jbutton_client_update, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -636,8 +643,8 @@ public class MainScreen extends javax.swing.JFrame {
             .addGap(0, 173, Short.MAX_VALUE)
         );
 
-        jLabel17.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel17.setText("Adicionar Cliente");
+        jlabel_add_or_update_client.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jlabel_add_or_update_client.setText("Adicionar Cliente");
 
         jLabel18.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         jLabel18.setText("ID Cliente:");
@@ -672,7 +679,7 @@ public class MainScreen extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel_client_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_client_addLayout.createSequentialGroup()
-                        .addComponent(jLabel17)
+                        .addComponent(jlabel_add_or_update_client)
                         .addGap(261, 261, 261))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_client_addLayout.createSequentialGroup()
                         .addGroup(jPanel_client_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -698,7 +705,7 @@ public class MainScreen extends javax.swing.JFrame {
             jPanel_client_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_client_addLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addComponent(jLabel17)
+                .addComponent(jlabel_add_or_update_client)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel_client_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel_client_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -832,13 +839,46 @@ public class MainScreen extends javax.swing.JFrame {
         jtf_addClient_name.setText("");
         jtf_addClient_id.setText("Gerado Pelo Sistema");
         jtf_addClient_email.setText("");
-
+        jlabel_add_or_update_client.setText("Adicionar Cliente");
+        jb_addCliente_create.setText("Finalizar Cadastro");
+        isClientUpdate = false;
         jPanel_client_add.setVisible(true);
         jPanel_client_info.setVisible(false);
     }//GEN-LAST:event_jbutton_client_addActionPerformed
 
     private void jbutton_client_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_client_updateActionPerformed
         // TODO add your handling code here:
+        //ASK WHAT OBJECT USER WANTS TO UPDATE
+        String idUpdate = JOptionPane.showInputDialog("Por favor digite o ID do Cliente para modificar: ");
+        //CREATE AUXILIARY VARS
+        ArrayList<Client> clientList = ClientDAO.read();
+        Client clientModify = new Client();
+        boolean achou = false;
+        //SEARCH FOR THE OBJECT
+        for (int i = 0; i < clientList.size() && achou == false; i++) {
+            clientModify = clientList.get(i);
+            if (idUpdate.equals("" + clientModify.getClientID())) {
+                achou = true;
+            }
+        }
+        //PREPARE NEW SCREEN OR SHOW ERROR MESSAGE
+        if (achou == true) {
+            //PREPARE NEW SCREEN
+            jtf_addClient_id.setText(""+clientModify.getClientID());
+            jtf_addClient_name.setText(clientModify.getName());
+            jtf_addClient_email.setText(clientModify.getEmail());
+            //MAKE THE SCREEN CHANGES
+            isClientUpdate = true;
+            jlabel_add_or_update_client.setText("Alterar Cliente");
+            jb_addCliente_create.setText("Finalizar Alteração");
+            jPanel_client_add.setVisible(true);
+            jPanel_client_info.setVisible(false);
+            
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "ID do Cliente não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+        }
+
     }//GEN-LAST:event_jbutton_client_updateActionPerformed
 
     private void jbutton_alterarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_alterarPedidoActionPerformed
@@ -860,7 +900,7 @@ public class MainScreen extends javax.swing.JFrame {
         jtf_product_id.setText("Gerado pelo Sistema");
         jtf_product_price.setText("");
         jtf_product_description.setText("");
-        
+
         jPanel_product_Info.setVisible(false);
         jPanel_product_add.setVisible(true);
     }//GEN-LAST:event_jbutton_inserirPedidoActionPerformed
@@ -872,7 +912,14 @@ public class MainScreen extends javax.swing.JFrame {
     private void jb_addCliente_createActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addCliente_createActionPerformed
         // TODO add your handling code here:
         if (newClientValidation()) {
-            String erro = ClientDAO.create(new Client(0, jtf_addClient_name.getText(), jtf_addClient_email.getText(), null));
+            String erro;
+            if(isClientUpdate == true){
+                System.out.println("foi de update");
+                erro = ClientDAO.update(new Client(Integer.parseInt(jtf_addClient_id.getText()), jtf_addClient_name.getText(), jtf_addClient_email.getText(), null));
+            }else{
+                System.out.println("foi de create");
+                erro = ClientDAO.create(new Client(0, jtf_addClient_name.getText(), jtf_addClient_email.getText(), null));
+            }
             clientTableBuilder(jtable_clientes, ClientDAO.read());
             //SHOW CREATION RESULT
             JOptionPane.showMessageDialog(null, (erro == null)
@@ -936,7 +983,6 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
@@ -981,6 +1027,7 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JButton jbutton_client_update;
     private javax.swing.JButton jbutton_inserirPedido;
     private javax.swing.JComboBox<String> jcb_product_client;
+    private javax.swing.JLabel jlabel_add_or_update_client;
     private javax.swing.JTable jtable_clientes;
     private javax.swing.JTable jtable_pedidos;
     private javax.swing.JTextField jtf_addClient_email;
