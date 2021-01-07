@@ -5,6 +5,7 @@ import controllers.ProductDAO;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -21,7 +22,7 @@ public class MainScreen extends javax.swing.JFrame {
 
     public MainScreen() {
         initComponents();
-        jPanel_product_Info.setVisible(true);
+        jPanel_product_info.setVisible(true);
         jPanel_product_add.setVisible(false);
         jPanel3.setVisible(false);
         jPanel4.setVisible(false);
@@ -38,7 +39,6 @@ public class MainScreen extends javax.swing.JFrame {
         //ESPECIAL TEXTFIELDS INITIALIZATION
         jtf_addClient_id.setEditable(false);
         jtf_product_id.setEditable(false);
-
     }
 
     void productTableBuilder(JTable jtable, ArrayList<Product> productList) {
@@ -123,8 +123,49 @@ public class MainScreen extends javax.swing.JFrame {
             erro = erro + "\nEmail do Cliente Não Preenchido";
             valido = false;
         }
-        //MOSTRAR O RESULTADO
+        //SHOW ERROR MESSAGE
         if (erro != "") {
+            JOptionPane.showMessageDialog(null, "Erro(s) Encontrados: " + erro,
+                    "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+        }
+        return valido;
+    }
+
+    void clientComboBoxBuilder() {
+        ArrayList<Client> clientList = ClientDAO.read();
+        jcb_product_client.removeAllItems();
+        jcb_product_client.addItem("Selecionar...");
+        jcb_product_client.setSelectedIndex(0);
+        clientList.forEach(c -> {
+            jcb_product_client.addItem(c.getClientID() + "- " + c.getName());
+        });
+    }
+
+    boolean newPedidoValidation() {
+        boolean valido = true;
+        String erro = "";
+        if (jtf_product_description.getText().isEmpty()) {
+            valido = false;
+            erro += "\nDescrição do Produto Vazia";
+        }
+        if (jtf_product_price.getText().isEmpty()) {
+            valido = false;
+            erro += "\nPreço do Produto Vazio";
+        } else {
+            String price = jtf_product_price.getText();
+            for (int i = 0; i < price.length(); i++) {
+                if ((price.charAt(i) < 48 || price.charAt(i) > 57) && (price.charAt(i) != ',' && price.charAt(i) != '.')) {
+                    valido = false;
+                    erro += "\nPreço Inválido";
+                }
+            }
+        }
+        if (jcb_product_client.getSelectedIndex() == 0) {
+            valido = false;
+            erro += "\nCliente Não Selecionado";
+        }
+        //SHOW ERROR MESSAGE
+        if (!erro.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Erro(s) Encontrados: " + erro,
                     "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
         }
@@ -143,10 +184,10 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLayeredPane1 = new javax.swing.JLayeredPane();
-        jPanel_product_Info = new javax.swing.JPanel();
-        jbutton_inserirPedido = new javax.swing.JButton();
-        jbutton_alterarPedido = new javax.swing.JButton();
-        jbutton_RemoverPedido = new javax.swing.JButton();
+        jPanel_product_info = new javax.swing.JPanel();
+        jbutton_inserirProduct = new javax.swing.JButton();
+        jbutton_alterarProduct = new javax.swing.JButton();
+        jbutton_RemoverProduct = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
@@ -165,10 +206,11 @@ public class MainScreen extends javax.swing.JFrame {
         jtf_product_description = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         jcb_product_client = new javax.swing.JComboBox<>();
-        jLabel16 = new javax.swing.JLabel();
-        jb_addPedido_create = new javax.swing.JButton();
-        jb_addPedido_back = new javax.swing.JButton();
+        jlb_addProduct_title = new javax.swing.JLabel();
+        jb_addProduct_create = new javax.swing.JButton();
+        jb_addProduct_back = new javax.swing.JButton();
         jtf_product_price = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
         jLayeredPane2 = new javax.swing.JLayeredPane();
         jPanel_client_info = new javax.swing.JPanel();
         jbutton_client_update = new javax.swing.JButton();
@@ -234,38 +276,38 @@ public class MainScreen extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jtable_clientes);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel2.setText("PEDIDOS");
+        jLabel2.setText("PRODUTOS");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel3.setText("CLIENTES");
 
-        jbutton_inserirPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jbutton_inserirPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_add_black_18dp.png"))); // NOI18N
-        jbutton_inserirPedido.setText("Inserir Pedido");
-        jbutton_inserirPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
-        jbutton_inserirPedido.addActionListener(new java.awt.event.ActionListener() {
+        jbutton_inserirProduct.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jbutton_inserirProduct.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_add_black_18dp.png"))); // NOI18N
+        jbutton_inserirProduct.setText("Inserir Pedido");
+        jbutton_inserirProduct.setMargin(new java.awt.Insets(4, 18, 4, 18));
+        jbutton_inserirProduct.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbutton_inserirPedidoActionPerformed(evt);
+                jbutton_inserirProductActionPerformed(evt);
             }
         });
 
-        jbutton_alterarPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jbutton_alterarPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_edit_black_18dp.png"))); // NOI18N
-        jbutton_alterarPedido.setText("Alterar Pedido");
-        jbutton_alterarPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
-        jbutton_alterarPedido.addActionListener(new java.awt.event.ActionListener() {
+        jbutton_alterarProduct.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jbutton_alterarProduct.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_edit_black_18dp.png"))); // NOI18N
+        jbutton_alterarProduct.setText("Alterar Pedido");
+        jbutton_alterarProduct.setMargin(new java.awt.Insets(4, 18, 4, 18));
+        jbutton_alterarProduct.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbutton_alterarPedidoActionPerformed(evt);
+                jbutton_alterarProductActionPerformed(evt);
             }
         });
 
-        jbutton_RemoverPedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jbutton_RemoverPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_clear_black_18dp.png"))); // NOI18N
-        jbutton_RemoverPedido.setText("Remover Pedido");
-        jbutton_RemoverPedido.setMargin(new java.awt.Insets(4, 18, 4, 18));
-        jbutton_RemoverPedido.addActionListener(new java.awt.event.ActionListener() {
+        jbutton_RemoverProduct.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jbutton_RemoverProduct.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_clear_black_18dp.png"))); // NOI18N
+        jbutton_RemoverProduct.setText("Remover Pedido");
+        jbutton_RemoverProduct.setMargin(new java.awt.Insets(4, 18, 4, 18));
+        jbutton_RemoverProduct.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jbutton_RemoverPedidoActionPerformed(evt);
+                jbutton_RemoverProductActionPerformed(evt);
             }
         });
 
@@ -298,45 +340,45 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel_product_last_product_datetime.setForeground(new java.awt.Color(255, 0, 0));
         jLabel_product_last_product_datetime.setText("XX/XX/XX - XX:XX");
 
-        javax.swing.GroupLayout jPanel_product_InfoLayout = new javax.swing.GroupLayout(jPanel_product_Info);
-        jPanel_product_Info.setLayout(jPanel_product_InfoLayout);
-        jPanel_product_InfoLayout.setHorizontalGroup(
-            jPanel_product_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_product_InfoLayout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel_product_infoLayout = new javax.swing.GroupLayout(jPanel_product_info);
+        jPanel_product_info.setLayout(jPanel_product_infoLayout);
+        jPanel_product_infoLayout.setHorizontalGroup(
+            jPanel_product_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_product_infoLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(jPanel_product_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel_product_InfoLayout.createSequentialGroup()
+                .addGroup(jPanel_product_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel_product_infoLayout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(10, 10, 10)
                         .addComponent(jLabel_product_total_produtos, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel_product_InfoLayout.createSequentialGroup()
+                    .addGroup(jPanel_product_infoLayout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(6, 6, 6)
                         .addComponent(jLabel_product_last_product_name, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel_product_InfoLayout.createSequentialGroup()
+                    .addGroup(jPanel_product_infoLayout.createSequentialGroup()
                         .addGap(200, 200, 200)
                         .addComponent(jLabel_product_last_product_datetime, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel6)
-                    .addGroup(jPanel_product_InfoLayout.createSequentialGroup()
+                    .addGroup(jPanel_product_infoLayout.createSequentialGroup()
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(12, 12, 12)
                         .addComponent(jLabel_product_faturamento, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
-                .addGroup(jPanel_product_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jbutton_inserirPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jbutton_alterarPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jbutton_RemoverPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel_product_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jbutton_inserirProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jbutton_alterarProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jbutton_RemoverProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-        jPanel_product_InfoLayout.setVerticalGroup(
-            jPanel_product_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel_product_InfoLayout.createSequentialGroup()
+        jPanel_product_infoLayout.setVerticalGroup(
+            jPanel_product_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel_product_infoLayout.createSequentialGroup()
                 .addGap(10, 10, 10)
-                .addGroup(jPanel_product_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_product_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
                     .addComponent(jLabel_product_total_produtos))
                 .addGap(13, 13, 13)
-                .addGroup(jPanel_product_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_product_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(jLabel_product_last_product_name))
                 .addGap(3, 3, 3)
@@ -344,16 +386,16 @@ public class MainScreen extends javax.swing.JFrame {
                 .addGap(13, 13, 13)
                 .addComponent(jLabel6)
                 .addGap(1, 1, 1)
-                .addGroup(jPanel_product_InfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel_product_infoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(jLabel_product_faturamento)))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_product_InfoLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_product_infoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jbutton_inserirPedido)
+                .addComponent(jbutton_inserirProduct)
                 .addGap(18, 18, 18)
-                .addComponent(jbutton_alterarPedido)
+                .addComponent(jbutton_alterarProduct)
                 .addGap(18, 18, 18)
-                .addComponent(jbutton_RemoverPedido)
+                .addComponent(jbutton_RemoverProduct)
                 .addContainerGap())
         );
 
@@ -383,7 +425,7 @@ public class MainScreen extends javax.swing.JFrame {
         jLabel8.setText("ID Produto:");
 
         jLabel11.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jLabel11.setText("Valor Prod:");
+        jLabel11.setText("Valor:");
 
         jLabel12.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel12.setText("Descrição:");
@@ -393,24 +435,27 @@ public class MainScreen extends javax.swing.JFrame {
 
         jcb_product_client.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel16.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
-        jLabel16.setText("Adicionar Produto");
+        jlb_addProduct_title.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        jlb_addProduct_title.setText("Adicionar Produto");
 
-        jb_addPedido_create.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_add_black_18dp.png"))); // NOI18N
-        jb_addPedido_create.setText("Finalizar Cadastro");
-        jb_addPedido_create.addActionListener(new java.awt.event.ActionListener() {
+        jb_addProduct_create.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_add_black_18dp.png"))); // NOI18N
+        jb_addProduct_create.setText("Finalizar Cadastro");
+        jb_addProduct_create.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_addPedido_createActionPerformed(evt);
+                jb_addProduct_createActionPerformed(evt);
             }
         });
 
-        jb_addPedido_back.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_clear_black_18dp.png"))); // NOI18N
-        jb_addPedido_back.setText("Cancelar");
-        jb_addPedido_back.addActionListener(new java.awt.event.ActionListener() {
+        jb_addProduct_back.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_clear_black_18dp.png"))); // NOI18N
+        jb_addProduct_back.setText("Cancelar");
+        jb_addProduct_back.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_addPedido_backActionPerformed(evt);
+                jb_addProduct_backActionPerformed(evt);
             }
         });
+
+        jLabel17.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        jLabel17.setText("R$");
 
         javax.swing.GroupLayout jPanel_product_addLayout = new javax.swing.GroupLayout(jPanel_product_add);
         jPanel_product_add.setLayout(jPanel_product_addLayout);
@@ -418,21 +463,22 @@ public class MainScreen extends javax.swing.JFrame {
             jPanel_product_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_product_addLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel16)
+                .addComponent(jlb_addProduct_title)
                 .addGap(262, 262, 262))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel_product_addLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(jPanel_product_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel_product_addLayout.createSequentialGroup()
-                        .addGroup(jPanel_product_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel_product_addLayout.createSequentialGroup()
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jtf_product_id, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel_product_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel8)
                             .addGroup(jPanel_product_addLayout.createSequentialGroup()
                                 .addComponent(jLabel11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jtf_product_price, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel17)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel_product_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jtf_product_price)
+                            .addComponent(jtf_product_id, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
                         .addGroup(jPanel_product_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -442,16 +488,16 @@ public class MainScreen extends javax.swing.JFrame {
                             .addComponent(jtf_product_description)
                             .addComponent(jcb_product_client, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel_product_addLayout.createSequentialGroup()
-                        .addComponent(jb_addPedido_back)
+                        .addComponent(jb_addProduct_back)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jb_addPedido_create)))
+                        .addComponent(jb_addProduct_create)))
                 .addGap(34, 34, 34))
         );
         jPanel_product_addLayout.setVerticalGroup(
             jPanel_product_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel_product_addLayout.createSequentialGroup()
                 .addGap(11, 11, 11)
-                .addComponent(jLabel16)
+                .addComponent(jlb_addProduct_title)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel_product_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
@@ -463,15 +509,16 @@ public class MainScreen extends javax.swing.JFrame {
                     .addComponent(jLabel11)
                     .addComponent(jLabel13)
                     .addComponent(jcb_product_client, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jtf_product_price, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jtf_product_price, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel17))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel_product_addLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jb_addPedido_back)
-                    .addComponent(jb_addPedido_create))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jb_addProduct_back)
+                    .addComponent(jb_addProduct_create))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
-        jLayeredPane1.setLayer(jPanel_product_Info, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jPanel_product_info, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jPanel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jPanel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
         jLayeredPane1.setLayer(jPanel_product_add, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -480,7 +527,7 @@ public class MainScreen extends javax.swing.JFrame {
         jLayeredPane1.setLayout(jLayeredPane1Layout);
         jLayeredPane1Layout.setHorizontalGroup(
             jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel_product_Info, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel_product_info, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -490,7 +537,7 @@ public class MainScreen extends javax.swing.JFrame {
         );
         jLayeredPane1Layout.setVerticalGroup(
             jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel_product_Info, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel_product_info, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -797,7 +844,7 @@ public class MainScreen extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(297, 297, 297)
+                        .addGap(289, 289, 289)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel3)
@@ -853,65 +900,172 @@ public class MainScreen extends javax.swing.JFrame {
         // TODO add your handling code here:
         //ASK WHAT OBJECT USER WANTS TO UPDATE
         String idUpdate = JOptionPane.showInputDialog("Por favor digite o ID do Cliente para modificar: ");
-        //CREATE AUXILIARY VARS
-        ArrayList<Client> clientList = ClientDAO.read();
-        Client clientModify = new Client();
-        boolean achou = false;
-        //SEARCH FOR THE OBJECT
-        for (int i = 0; i < clientList.size() && achou == false; i++) {
-            clientModify = clientList.get(i);
-            if (idUpdate.equals("" + clientModify.getClientID())) {
-                achou = true;
+        if (idUpdate != null) {
+            //CREATE AUXILIARY VARS
+            ArrayList<Client> clientList = ClientDAO.read();
+            Client clientModify = new Client();
+            boolean achou = false;
+            //SEARCH FOR THE OBJECT
+            for (int i = 0; i < clientList.size() && achou == false; i++) {
+                clientModify = clientList.get(i);
+                if (idUpdate.equals("" + clientModify.getClientID())) {
+                    achou = true;
+                }
             }
-        }
-        //PREPARE NEW SCREEN OR SHOW ERROR MESSAGE
-        if (achou == true) {
-            //PREPARE NEW SCREEN
-            jtf_addClient_id.setText("" + clientModify.getClientID());
-            jtf_addClient_name.setText(clientModify.getName());
-            jtf_addClient_email.setText(clientModify.getEmail());
-            //MAKE THE SCREEN CHANGES
-            isClientUpdate = true;
-            jlabel_add_or_update_client.setText("Alterar Cliente");
-            jb_addCliente_create.setText("Finalizar Alteração");
-            jPanel_client_add.setVisible(true);
-            jPanel_client_info.setVisible(false);
+            //PREPARE NEW SCREEN OR SHOW ERROR MESSAGE
+            if (achou == true) {
+                //PREPARE NEW SCREEN
+                jtf_addClient_id.setText("" + clientModify.getClientID());
+                jtf_addClient_name.setText(clientModify.getName());
+                jtf_addClient_email.setText(clientModify.getEmail());
+                //MAKE THE SCREEN CHANGES
+                isClientUpdate = true;
+                jlabel_add_or_update_client.setText("Alterar Cliente");
+                jb_addCliente_create.setText("Finalizar Alteração");
+                jPanel_client_add.setVisible(true);
+                jPanel_client_info.setVisible(false);
 
-        } else {
-            JOptionPane.showMessageDialog(null, "ID do Cliente não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(null, "ID do Cliente não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
     }//GEN-LAST:event_jbutton_client_updateActionPerformed
 
-    private void jbutton_alterarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_alterarPedidoActionPerformed
+    private void jbutton_alterarProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_alterarProductActionPerformed
         // TODO add your handling code here:
-        isPedidoUpdate = true;
-    }//GEN-LAST:event_jbutton_alterarPedidoActionPerformed
+        //ASK WHAT OBJECT USER WANTS TO UPDATE
+        String idUpdate = JOptionPane.showInputDialog("Por favor digite o ID do Produto para modificar: ");
+        if (idUpdate != null) {
+            //CREATE AUXILIARY VARS
+            ArrayList<Product> productList = ProductDAO.read();
+            Product productModify = new Product();
+            boolean achou = false;
+            //SEARCH FOR THE OBJECT
+            for (int i = 0; i < productList.size() && achou == false; i++) {
+                productModify = productList.get(i);
+                if (idUpdate.equals("" + productModify.getProdutctID())) {
+                    achou = true;
+                }
+            }
+            //PREPARE NEW SCREEN OR SHOW ERROR MESSAGE
+            if (achou == true) {
+                //PREPARE NEW SCREEN
+                jtf_product_id.setText("" + productModify.getProdutctID());
+                jtf_product_description.setText(productModify.getDescription());
+                jtf_product_price.setText("" + productModify.getPrice());
+                clientComboBoxBuilder();
+                for (int i = 1; i < jcb_product_client.getItemCount(); i++) {
+                    int idComboBox = Integer.parseInt(new StringTokenizer(jcb_product_client.getItemAt(i).toString(), "-").nextToken());
+                    if (idComboBox == productModify.getFk_client_id()) {
+                        jcb_product_client.setSelectedIndex(i);
+                    }
+                }
+                jcb_product_client.getItemAt(WIDTH);
+                //MAKE THE SCREEN CHANGES
+                isPedidoUpdate = true;
+                jlb_addProduct_title.setText("Alterar Produto");
 
-    private void jb_addPedido_createActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addPedido_createActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jb_addPedido_createActionPerformed
+                jPanel_product_add.setVisible(true);
+                jPanel_product_info.setVisible(false);
 
-    private void jb_addPedido_backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addPedido_backActionPerformed
+            } else {
+                JOptionPane.showMessageDialog(null, "ID do Produto não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jbutton_alterarProductActionPerformed
+
+    private void jb_addProduct_createActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addProduct_createActionPerformed
         // TODO add your handling code here:
-        jPanel_product_Info.setVisible(true);
+        if (newPedidoValidation() == true) {
+            int clientId = Integer.parseInt((new StringTokenizer(jcb_product_client.getSelectedItem().toString(), "-")).nextToken());
+            double price = -1;
+            boolean hasError = false;
+            String erro = null;
+            try {
+                price = Double.parseDouble(jtf_product_price.getText().replace(",", "."));
+            } catch (NumberFormatException e) {
+                System.out.println("Erro Encontrado: " + e.toString());
+                hasError = true;
+            }
+            if (hasError == false) {
+                if (isPedidoUpdate == true) {
+                    erro = ProductDAO.update(new Product(Integer.parseInt(jtf_product_id.getText()), price, jtf_product_description.getText(), clientId, null));
+                } else {
+                    erro = ProductDAO.create(new Product(0, price, jtf_product_description.getText(), clientId, null));
+                }
+                //SHOW CREATION RESULT
+                JOptionPane.showMessageDialog(null, (erro == null)
+                        ? "Dados do Produto salvos com sucesso!"
+                        : "Erro Encontado: \n" + erro, "Resultado da operação",
+                        (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+                if (erro == null) {
+                    //CHANGE SUBPAGE
+                    productTableBuilder(jtable_pedidos, ProductDAO.read());
+                    jPanel_product_add.setVisible(false);
+                    jPanel_product_info.setVisible(true);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Erro(s) Encontrados: " + "\nPreço Inválido",
+                        "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jb_addProduct_createActionPerformed
+
+    private void jb_addProduct_backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addProduct_backActionPerformed
+        // TODO add your handling code here:
+        jPanel_product_info.setVisible(true);
         jPanel_product_add.setVisible(false);
-    }//GEN-LAST:event_jb_addPedido_backActionPerformed
+    }//GEN-LAST:event_jb_addProduct_backActionPerformed
 
     //CHANGE TO ADD PEDIDO SCREEN
-    private void jbutton_inserirPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_inserirPedidoActionPerformed
+    private void jbutton_inserirProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_inserirProductActionPerformed
         // TODO add your handling code here:
         jtf_product_id.setText("Gerado pelo Sistema");
         jtf_product_price.setText("");
         jtf_product_description.setText("");
+        jlb_addProduct_title.setText("Adicionar Produto");
+        clientComboBoxBuilder();
         isPedidoUpdate = false;
-        jPanel_product_Info.setVisible(false);
+        jPanel_product_info.setVisible(false);
         jPanel_product_add.setVisible(true);
-    }//GEN-LAST:event_jbutton_inserirPedidoActionPerformed
+    }//GEN-LAST:event_jbutton_inserirProductActionPerformed
 
-    private void jbutton_RemoverPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_RemoverPedidoActionPerformed
+    private void jbutton_RemoverProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_RemoverProductActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jbutton_RemoverPedidoActionPerformed
+        String idProductDelete = JOptionPane.showInputDialog("Por favor digite o ID do Produto para remover: ");
+        if (idProductDelete != null) {
+            ArrayList<Product> productList = ProductDAO.read();
+            Product productDelete = new Product();
+            boolean achou = false;
+            for (int i = 0; i < productList.size() && achou == false; i++) {
+                productDelete = productList.get(i);
+                if (idProductDelete.equals("" + productDelete.getProdutctID())) {
+                    achou = true;
+                }
+            }
+            //ASK DELETE CONFIRMATION AND EXECUTE DELETE. THEN SHOW THE OPERATION RESULTS
+            if (achou == true) {
+                int delete = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir "
+                        + "o Produto:\nID: " + productDelete.getProdutctID() + ", Nome: " + productDelete.getDescription()+" ?",
+                        "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+
+                if (delete == 0) {
+                    String erro = ProductDAO.delete(productDelete);
+                    JOptionPane.showMessageDialog(null, (erro == null)
+                            ? "Produto Removido com Sucesso!"
+                            : "Erro Encontado: \n" + erro, "Resultado da operação",
+                            (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+                    //REFRESH TABLE
+                    productTableBuilder(jtable_pedidos, ProductDAO.read());
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operação Cancelada!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "ID do Produto não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_jbutton_RemoverProductActionPerformed
 
     //SAVE THE NEW CLIENT IN DATABASE / UPDATE DE CLIENT INFORMATION IN DATABASE
     private void jb_addCliente_createActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jb_addCliente_createActionPerformed
@@ -929,9 +1083,11 @@ public class MainScreen extends javax.swing.JFrame {
                     ? "Dados do Cliente salvos com sucesso!"
                     : "Erro Encontado: \n" + erro, "Resultado da operação",
                     (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
-            //CHANGE SUBPAGE
-            jPanel_client_add.setVisible(false);
-            jPanel_client_info.setVisible(true);
+            if (erro == null) {
+                //CHANGE SUBPAGE
+                jPanel_client_add.setVisible(false);
+                jPanel_client_info.setVisible(true);
+            }
         }
     }//GEN-LAST:event_jb_addCliente_createActionPerformed
 
@@ -944,36 +1100,54 @@ public class MainScreen extends javax.swing.JFrame {
     private void jbutton_client_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbutton_client_deleteActionPerformed
         // TODO add your handling code here:
         String idClientDelete = JOptionPane.showInputDialog("Por favor digite o ID do Cliente para remover: ");
-        ArrayList<Client> clientsList = ClientDAO.read();
-        Client clientDelete = new Client();
-        boolean achou = false;
-        for (int i = 0; i < clientsList.size() && achou == false; i++) {
-            clientDelete = clientsList.get(i);
-            if (idClientDelete.equals(""+clientDelete.getClientID())) {
-                achou = true;
+        if (idClientDelete != null) {
+            ArrayList<Client> clientsList = ClientDAO.read();
+            Client clientDelete = new Client();
+            boolean achou = false;
+            for (int i = 0; i < clientsList.size() && achou == false; i++) {
+                clientDelete = clientsList.get(i);
+                if (idClientDelete.equals("" + clientDelete.getClientID())) {
+                    achou = true;
+                }
             }
-        }
-        //ASK DELETE CONFIRMATION AND EXECUTE DELETE. THEN SHOW THE OPERATION RESULTS
-        if (achou == true) {
-            int delete = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir "
-                    + "o Cliente:\nID: " + clientDelete.getClientID() + ", Nome: " + clientDelete.getName(),
-                    "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
-
-            if (delete == 0) {
-                String erro = ClientDAO.delete(clientDelete);
-                JOptionPane.showMessageDialog(null, (erro == null)
-                        ? "Cliente Removido com Sucesso!"
-                        : "Erro Encontado: \n" + erro, "Resultado da operação",
-                        (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
-                //REFRESH TABLE
-                clientTableBuilder(jtable_clientes, ClientDAO.read());
+            //ASK DELETE CONFIRMATION AND EXECUTE DELETE. THEN SHOW THE OPERATION RESULTS
+            if (achou == true) {
+                int delete = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir "
+                        + "o Cliente:\nID: " + clientDelete.getClientID() + ", Nome: " + clientDelete.getName() + " ?"
+                        + "\nIsso também irá excluir os pedidos do\nCliente e Não poderá ser desfeito.",
+                        "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
+                int productDeleteError = 0;
+                if (delete == 0) {
+                    ArrayList<Product> productList = ProductDAO.read();
+                    for (int i = 0; i < productList.size(); i++) {
+                        Product p = productList.get(i);
+                        if (p.getFk_client_id() == clientDelete.getClientID()) {
+                            String erro = ProductDAO.delete(p);
+                            if (erro != null) {
+                                productDeleteError++;
+                            }
+                        }
+                    }
+                    if (productDeleteError == 0) {
+                        String erro = ClientDAO.delete(clientDelete);
+                        JOptionPane.showMessageDialog(null, (erro == null)
+                                ? "Cliente Removido com Sucesso!"
+                                : "Erro Encontado: \n" + erro, "Resultado da operação",
+                                (erro == null) ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
+                        //REFRESH TABLE
+                        clientTableBuilder(jtable_clientes, ClientDAO.read());
+                        productTableBuilder(jtable_pedidos, ProductDAO.read());
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Não foi possivel excluir o cliente, pois ainda"
+                                + "\nhá produtos cadastrados em seu nome.", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Operação Cancelada!");
+                }
             } else {
-                JOptionPane.showMessageDialog(null, "Operação Cancelada!");
+                JOptionPane.showMessageDialog(null, "ID não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "ID não Encontrado", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
         }
-        
     }//GEN-LAST:event_jbutton_client_deleteActionPerformed
 
     public static void main(String args[]) {
@@ -1016,7 +1190,7 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
@@ -1046,22 +1220,23 @@ public class MainScreen extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel_client_add;
     private javax.swing.JPanel jPanel_client_info;
-    private javax.swing.JPanel jPanel_product_Info;
     private javax.swing.JPanel jPanel_product_add;
+    private javax.swing.JPanel jPanel_product_info;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton jb_addCliente_back;
     private javax.swing.JButton jb_addCliente_create;
-    private javax.swing.JButton jb_addPedido_back;
-    private javax.swing.JButton jb_addPedido_create;
-    private javax.swing.JButton jbutton_RemoverPedido;
-    private javax.swing.JButton jbutton_alterarPedido;
+    private javax.swing.JButton jb_addProduct_back;
+    private javax.swing.JButton jb_addProduct_create;
+    private javax.swing.JButton jbutton_RemoverProduct;
+    private javax.swing.JButton jbutton_alterarProduct;
     private javax.swing.JButton jbutton_client_add;
     private javax.swing.JButton jbutton_client_delete;
     private javax.swing.JButton jbutton_client_update;
-    private javax.swing.JButton jbutton_inserirPedido;
+    private javax.swing.JButton jbutton_inserirProduct;
     private javax.swing.JComboBox<String> jcb_product_client;
     private javax.swing.JLabel jlabel_add_or_update_client;
+    private javax.swing.JLabel jlb_addProduct_title;
     private javax.swing.JTable jtable_clientes;
     private javax.swing.JTable jtable_pedidos;
     private javax.swing.JTextField jtf_addClient_email;
