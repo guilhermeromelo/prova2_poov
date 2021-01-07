@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import models.AuxClient;
 import models.Client;
 import models.Product;
 
@@ -41,11 +42,38 @@ public class MainScreen extends javax.swing.JFrame {
         jtf_product_id.setEditable(false);
     }
 
+    String dateBuilder(LocalDateTime localDate) {
+        String dia = "" + localDate.getDayOfMonth();
+        if (dia.length() == 1) {
+            dia = "0" + dia;
+        }
+        String mes = "" + localDate.getMonthValue();
+        if (mes.length() == 1) {
+            mes = "0" + mes;
+        }
+        String ano = "" + localDate.getYear();
+        ano = ano.substring(2);
+        return dia + "/" + mes + "/" + ano;
+    }
+
+    String hourBuilder(LocalDateTime localDate) {
+        String hora = "" + localDate.getHour();
+        if (hora.length() == 1) {
+            hora = "0" + hora;
+        }
+        String min = "" + localDate.getMinute();
+        if (min.length() == 1) {
+            min = "0" + min;
+        }
+        return (hora + ":" + min);
+    }
+
     void productTableBuilder(JTable jtable, ArrayList<Product> productList) {
         double faturamento = 0;
         DefaultTableModel tableRows1;
         LocalDateTime lastProductTime = null;
         Product lastProduct = null;
+        ArrayList<AuxClient> auxClientList = new ArrayList();
         tableRows1 = new DefaultTableModel(new String[]{"Nº", "ID Produto", "Descrição", "Valor", "Data", "Hora", "ID Cliente", "Nome Cliente"}, 0);
         for (int i = 0; i < productList.size(); i++) {
             Product p = productList.get(i);
@@ -58,21 +86,60 @@ public class MainScreen extends javax.swing.JFrame {
                 lastProductTime = p.getCreationDateTime();
                 lastProduct = p;
             }
-            String date = p.getCreationDateTime().getDayOfMonth() + "/"
-                    + p.getCreationDateTime().getMonthValue() + "/" + p.getCreationDateTime().getYear();
-            String hour = p.getCreationDateTime().getHour() + ":" + p.getCreationDateTime().getMinute();
             tableRows1.addRow(new Object[]{(i + 1), p.getProdutctID(), p.getDescription(),
-                p.getPrice(), date, hour, p.getFk_client_id(), c.getName()});
+                df.format(p.getPrice()), dateBuilder(p.getCreationDateTime()), hourBuilder(p.getCreationDateTime()), p.getFk_client_id(), c.getName()});
+
+            //SEARCH FOR COSTUMER WITH MORE PRODUCTS AND AMOUNTSPENT
+            boolean achou2 = false;
+            if (!auxClientList.isEmpty()) {
+                for (int j = 0; j < auxClientList.size(); j++) {
+                    if (auxClientList.get(j).getClientID() == p.getFk_client_id()) {
+                        auxClientList.get(j).countOneMoreProduct();
+                        auxClientList.get(j).increaseAmountSpent(p.getPrice());
+                        achou2 = true;
+                    }
+                }
+            }
+            if (achou2 == false) {
+                AuxClient newAuxClient = new AuxClient(p.getFk_client_id(), c.getName());
+                newAuxClient.countOneMoreProduct();
+                newAuxClient.increaseAmountSpent(p.getPrice());
+                auxClientList.add(newAuxClient);
+            }
         }
+        //SHOW AuxClientList INFORMATION
+        AuxClient maisComprou = null;
+        AuxClient maisGastou = null;
+        if (auxClientList.size() > 0) {
+            for (int j = 0; j < auxClientList.size(); j++) {
+                if (j == 0) {
+                    maisGastou = maisComprou = auxClientList.get(0);
+                } else {
+                    if (auxClientList.get(j).getAmountSpent() > maisGastou.getAmountSpent()) {
+                        maisGastou = auxClientList.get(j);
+                    }
+                    if (auxClientList.get(j).getProductQt() > maisComprou.getProductQt()) {
+                        maisComprou = auxClientList.get(j);
+                    }
+                }
+            }
+            jLabel_client_maior_numero_pedidos.setText(maisComprou.getClientID() + "- "
+                    + maisComprou.getClientName() + " - " + maisComprou.getProductQt() + " produtos");
+            jLabel_client_mais_gastou.setText(maisGastou.getClientID() + "- "
+                    + maisGastou.getClientName() + " - " + " R$ " + df.format(maisGastou.getAmountSpent()));
+        } else {
+            jLabel_client_maior_numero_pedidos.setText("Produtos ainda não foram Cadastrados.");
+            jLabel_client_mais_gastou.setText("Produtos ainda não foram Cadastrados.");
+        }
+
         jtable.setModel(tableRows1);
         jLabel_product_total_produtos.setText("" + productList.size());
-        jLabel_product_faturamento.setText(df.format(faturamento).toString());
+        jLabel_product_faturamento.setText(df.format(faturamento));
         if (lastProduct != null) {
             jLabel_product_last_product_name.setText(lastProduct.getProdutctID() + " - "
                     + lastProduct.getDescription());
-            jLabel_product_last_product_datetime.setText(lastProductTime.getDayOfMonth() + "/"
-                    + lastProductTime.getMonthValue() + "/" + lastProductTime.getYear() + " - "
-                    + lastProductTime.getHour() + ":" + lastProductTime.getMinute());
+            jLabel_product_last_product_datetime.setText(dateBuilder(lastProductTime) + " - "
+                    + hourBuilder(lastProductTime));
         } else {
             jLabel_product_last_product_name.setText("Produtos ainda não foram Cadastrados.");
             jLabel_product_last_product_datetime.setText("");
@@ -93,21 +160,18 @@ public class MainScreen extends javax.swing.JFrame {
                 lastClientTime = c.getCreationDateTime();
                 lastClient = c;
             }
-            String date = c.getCreationDateTime().getDayOfMonth() + "/"
-                    + c.getCreationDateTime().getMonthValue() + "/" + c.getCreationDateTime().getYear();
-            String hour = c.getCreationDateTime().getHour() + ":" + c.getCreationDateTime().getMinute();
-            tableRows.addRow(new Object[]{(i + 1), c.getClientID(), c.getName(), c.getEmail(), date, hour});
+            tableRows.addRow(new Object[]{(i + 1), c.getClientID(), c.getName(),
+                c.getEmail(), dateBuilder(c.getCreationDateTime()), hourBuilder(c.getCreationDateTime())});
         }
         jtable.setModel(tableRows);
         jLabel_client_total_cadastrados.setText("" + clientList.size());
         if (lastClient != null) {
             jLabel_client_last_client_name.setText(lastClient.getClientID() + " - "
                     + lastClient.getName());
-            jLabel_client_last_client_datetime.setText(lastClientTime.getDayOfMonth() + "/"
-                    + lastClientTime.getMonthValue() + "/" + lastClientTime.getYear() + " - "
-                    + lastClientTime.getHour() + ":" + lastClientTime.getMinute());
+            jLabel_client_last_client_datetime.setText(dateBuilder(lastClientTime) + " - "
+                    + hourBuilder(lastClientTime));
         } else {
-            jLabel_client_last_client_name.setText("Produtos ainda não foram Cadastrados.");
+            jLabel_client_last_client_name.setText("Clientes não Cadastrados.");
             jLabel_client_last_client_datetime.setText("");
         }
     }
@@ -151,14 +215,6 @@ public class MainScreen extends javax.swing.JFrame {
         if (jtf_product_price.getText().isEmpty()) {
             valido = false;
             erro += "\nPreço do Produto Vazio";
-        } else {
-            String price = jtf_product_price.getText();
-            for (int i = 0; i < price.length(); i++) {
-                if ((price.charAt(i) < 48 || price.charAt(i) > 57) && (price.charAt(i) != ',' && price.charAt(i) != '.')) {
-                    valido = false;
-                    erro += "\nPreço Inválido";
-                }
-            }
         }
         if (jcb_product_client.getSelectedIndex() == 0) {
             valido = false;
@@ -238,6 +294,7 @@ public class MainScreen extends javax.swing.JFrame {
         jb_addCliente_back = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Artesanato & Cia");
@@ -451,6 +508,12 @@ public class MainScreen extends javax.swing.JFrame {
         jb_addProduct_back.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jb_addProduct_backActionPerformed(evt);
+            }
+        });
+
+        jtf_product_price.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jtf_product_priceKeyTyped(evt);
             }
         });
 
@@ -832,23 +895,21 @@ public class MainScreen extends javax.swing.JFrame {
                     .addGap(2, 2, 2)))
         );
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/icons/baseline_info_black_18dp.png"))); // NOI18N
+        jButton1.setText("Sobre");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(604, 604, 604))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(289, 289, 289)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel3)
-                        .addGap(295, 295, 295))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -856,14 +917,29 @@ public class MainScreen extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLayeredPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel1)
+                                .addGap(290, 290, 290))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(289, 289, 289)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel3)))
+                        .addGap(231, 231, 231)
+                        .addComponent(jButton1)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -1047,7 +1123,7 @@ public class MainScreen extends javax.swing.JFrame {
             //ASK DELETE CONFIRMATION AND EXECUTE DELETE. THEN SHOW THE OPERATION RESULTS
             if (achou == true) {
                 int delete = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja excluir "
-                        + "o Produto:\nID: " + productDelete.getProdutctID() + ", Nome: " + productDelete.getDescription()+" ?",
+                        + "o Produto:\nID: " + productDelete.getProdutctID() + ", Nome: " + productDelete.getDescription() + " ?",
                         "Confirmar Exclusão", JOptionPane.YES_NO_OPTION);
 
                 if (delete == 0) {
@@ -1137,7 +1213,7 @@ public class MainScreen extends javax.swing.JFrame {
                         //REFRESH TABLE
                         clientTableBuilder(jtable_clientes, ClientDAO.read());
                         productTableBuilder(jtable_pedidos, ProductDAO.read());
-                    }else{
+                    } else {
                         JOptionPane.showMessageDialog(null, "Não foi possivel excluir o cliente, pois ainda"
                                 + "\nhá produtos cadastrados em seu nome.", "Erro ao Realizar Operação", JOptionPane.ERROR_MESSAGE);
                     }
@@ -1149,6 +1225,31 @@ public class MainScreen extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jbutton_client_deleteActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(null, ""
+                + "\nSistema Desktop Desenvolvido na Disciplina de           "
+                + "\nProgramação Orientada a Objetos e Visual"
+                + "\ncomo Atividade Avaliativa 2 - 07/01/2021.\n"
+                + "\nAluno: Guilherme Rodrigues de Melo, 4ºPeríodo"
+                + "\nProf.: Jefferson Beethoven Martins");
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jtf_product_priceKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtf_product_priceKeyTyped
+        // TODO add your handling code here:
+        String caracteres = "0987654321.,";
+        String aux = ",.";
+        if (!caracteres.contains(evt.getKeyChar() + "")) {
+            evt.consume();
+        } else {
+            if (aux.contains(evt.getKeyChar() + "")) {
+                if (jtf_product_price.getText().contains(".") || jtf_product_price.getText().contains(",")) {
+                    evt.consume();
+                }
+            }
+        }
+    }//GEN-LAST:event_jtf_product_priceKeyTyped
 
     public static void main(String args[]) {
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -1183,6 +1284,7 @@ public class MainScreen extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
